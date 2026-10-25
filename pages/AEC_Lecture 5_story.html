@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AEC Lecture 5 - Resource Scheduling & PSO</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8fc;color:#172033;line-height:1.7}
+nav{position:sticky;top:0;background:#ffffffee;border-bottom:1px solid #e5e7eb;padding:14px 24px;z-index:5}
+nav b{font-size:18px}nav a{margin-left:14px;text-decoration:none;color:#475569}
+.hero{max-width:1100px;margin:auto;padding:60px 24px 30px;display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+.hero h1{font-size:54px;line-height:1.05;margin:10px 0}.grad{background:linear-gradient(90deg,#2563eb,#7c3aed,#0891b2);-webkit-background-clip:text;color:transparent}
+.badge{display:inline-block;background:#dbeafe;color:#1d4ed8;padding:6px 10px;border-radius:999px;font-weight:700}
+.panel{background:linear-gradient(145deg,#111827,#1e3a8a,#312e81);color:#fff;border-radius:24px;padding:24px}
+.panel div{background:#ffffff12;border:1px solid #ffffff1a;padding:12px;border-radius:12px;margin:10px 0}
+main{max-width:1100px;margin:auto;padding:0 24px 60px}
+section{background:#fff;border:1px solid #e5e7eb;border-radius:22px;padding:28px;margin:20px 0;box-shadow:0 14px 35px #0f172a12}
+h2{font-size:30px;margin:6px 0}.lead{color:#475569;font-size:18px}
+.story{background:#f0f9ff;border:1px solid #bae6fd;border-left:5px solid #0891b2;padding:16px;border-radius:14px;margin:16px 0}
+.memory{background:#eef2ff;border:1px solid #c7d2fe;padding:16px;border-radius:14px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.card{border:1px solid #e5e7eb;border-radius:15px;padding:16px}.card h4{margin:0 0 6px}
+pre{background:#0f172a;color:#e2e8f0;padding:18px;border-radius:15px;white-space:pre-wrap;overflow:auto}
+table{width:100%;border-collapse:collapse;margin-top:14px}th,td{padding:12px;border-bottom:1px solid #e5e7eb;text-align:left}th{background:#f8fafc}
+.formula{background:#111827;color:white;padding:16px;border-radius:14px;font-family:Georgia,serif}
+.take{background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white;border-radius:20px;padding:22px;margin-top:20px}
+footer{text-align:center;color:#64748b;padding:30px}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.hero h1{font-size:42px}nav a{display:none}}
+</style>
+</head>
+<body>
+<nav><b>⚙ Advanced Edge Computing — Lecture 5</b>
+<a href="#resource">Resource Scheduling</a><a href="#workflow">Workflow</a><a href="#algorithms">Algorithms</a><a href="#pso">PSO</a></nav>
+
+<div class="hero">
+<div><span class="badge">Story-Based Notes</span><h1>Resource Scheduling & <span class="grad">Particle Swarm Optimization</span></h1>
+<p>Imagine you manage a huge cloud-based food delivery system called <b>QuickServe</b>. Thousands of orders arrive and many servers are available. Your challenge is to decide which task should run where, in what order, and with what objective.</p></div>
+<div class="panel"><h3>The Journey</h3><div>1. Resource Scheduling<br><small>Cost, time, energy, load, QoS, utilization</small></div><div>2. Task Relationships<br><small>Independent vs workflow tasks</small></div><div>3. Scheduling Algorithms<br><small>Static, dynamic, heuristics, metaheuristics</small></div><div>4. PSO<br><small>Bird-flock inspired optimization</small></div></div>
+</div>
+
+<main>
+<section id="resource">
+<h2>🧠 Resource Scheduling in Cloud Computing</h2>
+<p class="lead">QuickServe has 1000 tasks and 50 servers. The scheduler must answer: <b>Which task should use which resource?</b></p>
+<div class="story"><b>Restaurant analogy:</b> 100 food orders arrive and 10 chefs are available. A manager decides which chef handles each order. That manager is like a cloud scheduler.</div>
+<pre>Users submit tasks
+        ↓
+Cloud Scheduler
+        ↓
+Choose resources
+        ↓
+Servers / VMs / Storage / Bandwidth</pre>
+<div class="grid">
+<div class="card"><h4>💰 Cost-Aware</h4><p>Provider revenue, profit, user expenses and resource cost.</p></div>
+<div class="card"><h4>⚡ Efficiency-Aware</h4><p>Makespan, response time, execution time, bandwidth, priority and execution cost.</p></div>
+<div class="card"><h4>🌱 Energy-Aware</h4><p>Reduce energy consumption.</p></div>
+<div class="card"><h4>⚖️ Load-Balancing-Aware</h4><p>Distribute workload properly.</p></div>
+<div class="card"><h4>🎯 QoS-Aware</h4><p>Availability, fault tolerance, reliability, SLA, throughput and recovery time.</p></div>
+<div class="card"><h4>📈 Utilization-Aware</h4><p>Use available resources efficiently.</p></div>
+</div>
+<div class="memory"><b>Easy memory:</b> Save money, save time, save energy, balance load, improve QoS, improve utilization.</div>
+</section>
+
+<section id="workflow">
+<h2>🔗 Workflow vs Independent Scheduling</h2>
+<div class="grid">
+<div class="card"><h4>Workflow Scheduling</h4><p>Tasks have dependencies and precedence order.</p></div>
+<div class="card"><h4>Independent Scheduling</h4><p>Tasks are independent and can run in any sequence.</p></div>
+</div>
+<div class="story"><b>Food story:</b> You cannot deliver food before packing it, and you cannot pack it before cooking it.</div>
+<pre>Take Order
+   ↓
+Cook
+   ↓
+Pack
+   ↓
+Deliver</pre>
+<p>Workflow is represented using a <b>Directed Acyclic Graph (DAG)</b>.</p>
+<pre>V = set of tasks
+E = set of dependencies
+
+t1 → t2 → t3</pre>
+<div class="grid">
+<div class="card"><h4>Parent Task</h4><p>Must finish before the child task can start.</p></div>
+<div class="card"><h4>Child Task</h4><p>Depends on a parent task.</p></div>
+<div class="card"><h4>Entry Task</h4><p>Task with no parent.</p></div>
+<div class="card"><h4>Exit Task</h4><p>Task with no child.</p></div>
+</div>
+</section>
+
+<section id="algorithms">
+<h2>📋 Goal of Task Scheduling</h2>
+<p>The goal is to map tasks to appropriate resources so that one or more objectives are optimized.</p>
+<div class="grid">
+<div class="card"><h4>Reduce completion time</h4><p>Finish all tasks sooner.</p></div>
+<div class="card"><h4>Improve utilization</h4><p>Avoid idle cloud resources.</p></div>
+<div class="card"><h4>Satisfy user needs</h4><p>Meet different user requirements.</p></div>
+</div>
+<div class="memory"><b>Important:</b> The lecture notes that scheduling can be NP-complete, so a good suboptimal answer found quickly is often preferred over an exact optimum that takes too long.</div>
+
+<h3>Static vs Dynamic</h3>
+<table><tr><th>Type</th><th>Meaning</th></tr><tr><td>Static</td><td>Decisions are made before execution.</td></tr><tr><td>Dynamic</td><td>Decisions may change during execution.</td></tr></table>
+
+<h3>Optimization Goals</h3>
+<table><tr><th>Maximize</th><th>Minimize</th></tr><tr><td>Accuracy, Profit, Resource Utilization</td><td>Makespan, Execution Time, Cost, Energy</td></tr></table>
+<div class="story"><b>Makespan:</b> Total time needed to complete all tasks — effectively the finish time of the last task.</div>
+
+<h3>Heuristics</h3>
+<p>A heuristic is a rule-based, problem-specific method that tries to find a good near-optimal answer in reasonable time.</p>
+<div class="grid">
+<div class="card"><h4>FCFS</h4><p>First Come First Serve.</p></div>
+<div class="card"><h4>Min-Min</h4><p>Chooses tasks based on smaller minimum completion values.</p></div>
+<div class="card"><h4>Max-Min</h4><p>Chooses tasks based on larger minimum completion values.</p></div>
+<div class="card"><h4>Round Robin</h4><p>Resources are assigned in circular order.</p></div>
+<div class="card"><h4>SJF</h4><p>Shortest Job First.</p></div>
+<div class="card"><h4>LJF</h4><p>Longest Job First.</p></div>
+</div>
+
+<h3>Metaheuristics</h3>
+<p>Metaheuristics are high-level strategies that combine lower-level methods for exploration and exploitation of the search space.</p>
+<div class="grid">
+<div class="card"><h4>PSO</h4><p>Particle Swarm Optimization.</p></div>
+<div class="card"><h4>ACO</h4><p>Ant Colony Optimization.</p></div>
+<div class="card"><h4>GA</h4><p>Genetic Algorithm.</p></div>
+<div class="card"><h4>DE</h4><p>Differential Evolution.</p></div>
+<div class="card"><h4>SA</h4><p>Simulated Annealing.</p></div>
+</div>
+<div class="memory"><b>Easy difference:</b> Heuristic = smart rule. Metaheuristic = broader smart search strategy.</div>
+</section>
+
+<section id="pso">
+<h2>🐦 Particle Swarm Optimization (PSO)</h2>
+<p>PSO is an optimization technique proposed by Kennedy and Eberhart in 1995. It is based on swarm movement and collective intelligence.</p>
+<div class="story"><b>Bird-flock story:</b> Imagine birds searching for food. Every bird remembers the best place it personally found, and the entire flock knows the best place discovered by any bird.</div>
+<pre>Bird = Particle
+Food = Solution
+pbest = Best position found by one particle
+gbest = Best position found by the whole swarm</pre>
+
+<h3>How PSO Searches</h3>
+<p>Each particle is a candidate solution. It adjusts its movement using its own experience and the experience of the swarm.</p>
+
+<h3>Velocity Update</h3>
+<div class="formula">V(t+1) = wV(t) + c1 × rand() × (Xpbest − X(t)) + c2 × rand() × (Xgbest − X(t))</div>
+
+<h3>Position Update</h3>
+<div class="formula">X(t+1) = X(t) + V(t+1)</div>
+
+<h3>Meaning of Symbols</h3>
+<table>
+<tr><th>Symbol</th><th>Meaning</th></tr>
+<tr><td>V(t)</td><td>Velocity of particle at time t</td></tr>
+<tr><td>X(t)</td><td>Particle position at time t</td></tr>
+<tr><td>w</td><td>Inertia weight</td></tr>
+<tr><td>c1, c2</td><td>Learning / acceleration factors</td></tr>
+<tr><td>rand()</td><td>Random number between 0 and 1</td></tr>
+<tr><td>Xpbest</td><td>Particle's best position</td></tr>
+<tr><td>Xgbest</td><td>Global best position</td></tr>
+</table>
+
+<div class="story"><b>Simple meaning of the formula:</b> Keep some old movement + move toward my best position + move toward the group's best position.</div>
+
+<h3>PSO Algorithm</h3>
+<pre>1. Randomly initialize particle positions and velocities
+2. Calculate fitness
+3. Update personal best (pbest)
+4. Update global best (gbest)
+5. Update velocity
+6. Update position
+7. Repeat until termination condition
+8. Return approximate global minimum</pre>
+</section>
+
+<section>
+<h2>🎯 Quick Revision</h2>
+<pre>Tasks arrive
+   ↓
+Scheduler chooses resources
+   ↓
+Objectives:
+Cost • Time • Energy • Load • QoS • Utilization
+   ↓
+Tasks:
+Independent OR Workflow
+   ↓
+Scheduling:
+Static OR Dynamic
+   ↓
+Optimization:
+Heuristics OR Metaheuristics
+   ↓
+PSO:
+Particles + pbest + gbest
+   ↓
+Move toward better solutions</pre>
+
+<div class="take">
+<h2>Best Memory Tricks</h2>
+<ul>
+<li><b>Scheduler = Restaurant manager</b></li>
+<li><b>Workflow = Cook → Pack → Deliver</b></li>
+<li><b>Heuristic = Smart shortcut</b></li>
+<li><b>Metaheuristic = Smart search strategy</b></li>
+<li><b>PSO = Birds searching for food</b></li>
+<li><b>pbest = My best</b></li>
+<li><b>gbest = Group's best</b></li>
+</ul>
+</div>
+</section>
+</main>
+<footer>Advanced Edge Computing • Lecture 5 • Resource Scheduling & PSO</footer>
+<a href="../index.html" aria-label="Back to lecture library" style="position:fixed;bottom:18px;left:18px;z-index:1000;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font:600 14px/1.5 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 22px #0f172a33">← Lecture library</a>
+</body>
+</html>

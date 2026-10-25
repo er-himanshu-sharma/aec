@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Edge Computing - Lecture 2 | Cloud Computing</title>
+  <style>
+    :root{
+      --bg:#f6f8fc;
+      --surface:#ffffff;
+      --text:#172033;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --secondary:#7c3aed;
+      --cyan:#06b6d4;
+      --green:#16a34a;
+      --orange:#f59e0b;
+      --red:#ef4444;
+      --border:#e5e7eb;
+      --dark:#0f172a;
+      --shadow:0 16px 45px rgba(15,23,42,.08);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      line-height:1.72;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(37,99,235,.08), transparent 28%),
+        radial-gradient(circle at 90% 8%, rgba(124,58,237,.08), transparent 25%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    code{font-family:"SFMono-Regular",Consolas,monospace}
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(226,232,240,.9);
+    }
+    .nav{
+      max-width:1200px;margin:auto;padding:13px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:11px;font-weight:850;
+    }
+    .brand-icon{
+      width:38px;height:38px;border-radius:13px;
+      display:grid;place-items:center;color:#fff;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      box-shadow:0 8px 22px rgba(37,99,235,.22);
+    }
+    .links{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .links a{padding:8px 10px;border-radius:10px;color:#475569;font-size:.9rem}
+    .links a:hover{background:#eef4ff;color:var(--primary)}
+
+    .hero{
+      max-width:1200px;margin:auto;padding:70px 24px 42px;
+      display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 12px;border-radius:999px;
+      background:#dbeafe;color:#1d4ed8;font-weight:800;font-size:.84rem;
+    }
+    h1{
+      margin:18px 0 18px;
+      font-size:clamp(2.7rem,6vw,5.2rem);
+      letter-spacing:-.045em;line-height:1.02;
+    }
+    .gradient{
+      background:linear-gradient(135deg,var(--primary),var(--secondary),var(--cyan));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero p{font-size:1.12rem;color:#475569;max-width:760px}
+    .hero-panel{
+      color:#fff;border-radius:30px;padding:30px;
+      background:linear-gradient(145deg,#111827,#1e3a8a 55%,#312e81);
+      box-shadow:0 24px 60px rgba(30,58,138,.22);
+      position:relative;overflow:hidden;
+    }
+    .hero-panel:after{
+      content:"";position:absolute;width:220px;height:220px;border-radius:50%;
+      right:-75px;bottom:-85px;
+      background:radial-gradient(circle,rgba(34,211,238,.34),transparent 68%);
+    }
+    .hero-panel h3{margin-top:0;font-size:1.35rem}
+    .journey{display:grid;gap:11px;position:relative;z-index:2}
+    .journey-item{
+      padding:14px 15px;border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.07);border-radius:14px;font-weight:750;
+    }
+    .journey-item span{display:block;color:#cbd5e1;font-size:.87rem;font-weight:500;margin-top:4px}
+
+    .container{max-width:1200px;margin:auto;padding:10px 24px 76px}
+    .section{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:31px;margin:22px 0;
+      box-shadow:var(--shadow);
+      scroll-margin-top:90px;
+    }
+    .section h2{margin:4px 0 10px;font-size:2rem;line-height:1.25}
+    .section h3{margin-top:28px}
+    .lead{font-size:1.08rem;color:#475569}
+    .chapter{
+      display:inline-block;padding:5px 10px;border-radius:999px;
+      background:#eef2ff;color:#4338ca;font-size:.8rem;font-weight:800;
+    }
+    .story{
+      background:#f0f9ff;border:1px solid #bae6fd;border-left:5px solid var(--cyan);
+      border-radius:16px;padding:18px 20px;margin:18px 0;
+    }
+    .story strong{color:#0369a1}
+    .cards-2,.cards-3,.cards-5{
+      display:grid;gap:18px;margin-top:18px;
+    }
+    .cards-2{grid-template-columns:repeat(2,1fr)}
+    .cards-3{grid-template-columns:repeat(3,1fr)}
+    .cards-5{grid-template-columns:repeat(5,1fr)}
+    .card{
+      border:1px solid var(--border);border-radius:18px;padding:20px;background:#fff;
+    }
+    .card .ico{
+      width:48px;height:48px;border-radius:14px;
+      display:grid;place-items:center;font-size:1.45rem;
+      background:#eff6ff;margin-bottom:12px;
+    }
+    .card h4{margin:0 0 8px;font-size:1.06rem}
+    .card p{margin:0;color:#526078}
+    pre{
+      margin:18px 0;
+      padding:20px;border-radius:18px;
+      background:var(--dark);color:#e2e8f0;
+      white-space:pre-wrap;overflow:auto;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+      font-size:.95rem;line-height:1.6;
+    }
+    .memory{
+      background:linear-gradient(135deg,#eef2ff,#ecfeff);
+      border:1px solid #c7d2fe;border-radius:20px;padding:22px;margin:20px 0;
+    }
+    .note{
+      background:#fff7ed;border:1px solid #fed7aa;border-left:5px solid var(--orange);
+      border-radius:16px;padding:17px 19px;margin:18px 0;
+    }
+    .diagram{
+      display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;
+      margin:24px 0;
+    }
+    .block{
+      border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center;
+      background:#fff;
+    }
+    .arrow{font-size:2rem;color:var(--primary);font-weight:900}
+    table{
+      width:100%;border-collapse:collapse;margin-top:15px;overflow:hidden;
+      border-radius:14px;
+    }
+    th,td{padding:14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    th{background:#f8fafc}
+    .takeaway{
+      margin-top:26px;border-radius:24px;padding:28px;
+      background:linear-gradient(135deg,#0f172a,#1d4ed8);
+      color:#fff;
+    }
+    .takeaway h2{margin-top:0}
+    .takeaway li{margin:8px 0}
+    .mnemonic{
+      font-size:2rem;font-weight:900;letter-spacing:.12em;
+      color:#312e81;
+    }
+    footer{text-align:center;color:#64748b;padding:25px 20px 50px}
+
+    @media(max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .cards-5{grid-template-columns:repeat(2,1fr)}
+      .links{display:none}
+    }
+    @media(max-width:720px){
+      .cards-2,.cards-3,.cards-5{grid-template-columns:1fr}
+      .diagram{grid-template-columns:1fr}
+      .arrow{transform:rotate(90deg);text-align:center}
+      .section{padding:22px}
+      h1{font-size:3rem}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <div class="brand"><div class="brand-icon">☁</div> Advanced Edge Computing</div>
+      <div class="links">
+        <a href="#why">Why Cloud</a>
+        <a href="#what">What is Cloud</a>
+        <a href="#datacenter">Data Centre</a>
+        <a href="#virtualization">Virtualization</a>
+        <a href="#nist">NIST</a>
+        <a href="#characteristics">5 Characteristics</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#revision">Revision</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="badge">📘 Lecture 2 • Story-Based Notes</span>
+      <h1>Cloud Computing explained like a <span class="gradient">simple story</span></h1>
+      <p>
+        Imagine your small online shop suddenly gets millions of users. This one story explains
+        why cloud computing became necessary, how it works, and the five essential NIST characteristics.
+      </p>
+    </div>
+    <aside class="hero-panel">
+      <h3>The Lecture Journey</h3>
+      <div class="journey">
+        <div class="journey-item">1. Traditional IT struggles <span>Applications, data and users grow rapidly.</span></div>
+        <div class="journey-item">2. Cloud becomes the answer <span>Rent resources instead of owning everything.</span></div>
+        <div class="journey-item">3. Data centres & virtualization <span>Physical infrastructure powers virtual resources.</span></div>
+        <div class="journey-item">4. NIST cloud model <span>Definition and five essential characteristics.</span></div>
+        <div class="journey-item">5. Cloud architecture <span>Front end + back end.</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <main class="container">
+    <section class="section" id="why">
+      <span class="chapter">Chapter 1</span>
+      <h2>🚀 Why Did Cloud Computing Become Necessary?</h2>
+      <p class="lead">
+        Imagine you start an online shopping company called <strong>ShopFast</strong>.
+        In the beginning, you have one website, one server and only a few customers.
+      </p>
+
+      <div class="story">
+        <strong>Story:</strong> Everything works smoothly until your company becomes popular.
+        Suddenly you have millions of users, mobile apps, customer analytics, large databases,
+        images, videos and much more traffic.
+      </div>
+
+      <pre>Earlier:
+1 server
+100 customers
+Small database
+
+Later:
+Millions of users
+Huge content
+More storage
+More bandwidth
+More processing
+More devices</pre>
+
+      <h3>The traditional approach</h3>
+      <p>You could buy a huge amount of infrastructure:</p>
+      <pre>100 servers
+Huge storage
+Power backup
+Cooling systems
+Network equipment
+IT staff</pre>
+
+      <p>But what if you only need this extra capacity during a festival sale?</p>
+
+      <div class="memory">
+        <strong>Easy idea:</strong><br>
+        Traditional IT = Buy and own<br>
+        Cloud Computing = Rent and use
+      </div>
+    </section>
+
+    <section class="section" id="what">
+      <span class="chapter">Chapter 2</span>
+      <h2>☁️ What is Cloud Computing?</h2>
+      <p class="lead">
+        Think about electricity. You do not build your own power station.
+        You use electricity from a provider and pay according to usage.
+      </p>
+
+      <div class="diagram">
+        <div class="block">
+          <strong>Your Device</strong><br><br>
+          Laptop<br>Mobile<br>Tablet
+        </div>
+        <div class="arrow">→</div>
+        <div class="block">
+          <strong>Cloud</strong><br><br>
+          Servers<br>Storage<br>Applications<br>Databases
+        </div>
+      </div>
+
+      <div class="story">
+        <strong>Simple meaning:</strong> Cloud computing allows you to use remote computing
+        resources over a network without owning all the physical infrastructure yourself.
+      </div>
+
+      <h3>Hotel Analogy</h3>
+      <p>
+        Suppose you visit Delhi for two days. You do not buy a house; you book a hotel.
+        The hotel manages electricity, cleaning, security and maintenance.
+      </p>
+
+      <div class="cards-3">
+        <div class="card">
+          <div class="ico">👤</div>
+          <h4>Cloud Consumer</h4>
+          <p>The person or organisation using cloud services.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🏢</div>
+          <h4>Cloud Service Provider</h4>
+          <p>The company that provides and manages the cloud resources.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🧰</div>
+          <h4>Cloud Resources</h4>
+          <p>Servers, storage, networking, software and computing capacity.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="datacenter">
+      <span class="chapter">Chapter 3</span>
+      <h2>🏭 What is Inside a Data Centre?</h2>
+      <p class="lead">
+        Imagine a huge warehouse filled with racks of computers instead of boxes.
+        That is a data centre.
+      </p>
+
+      <pre>Data Centre
+│
+├── Rack 1
+│   ├── Server
+│   ├── Server
+│   └── Server
+│
+├── Rack 2
+│   ├── Server
+│   ├── Server
+│   └── Server
+│
+└── Thousands more...</pre>
+
+      <div class="cards-3">
+        <div class="card">
+          <div class="ico">⚡</div>
+          <h4>Power</h4>
+          <p>Servers need continuous electricity and backup power.</p>
+        </div>
+        <div class="card">
+          <div class="ico">❄️</div>
+          <h4>Cooling</h4>
+          <p>Thousands of servers generate heat and must be cooled.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🔐</div>
+          <h4>Security</h4>
+          <p>Data centres contain important systems and are physically secured.</p>
+        </div>
+      </div>
+
+      <h3>PUE and WUE</h3>
+      <div class="cards-2">
+        <div class="card">
+          <h4>PUE</h4>
+          <pre>PUE =
+Total Facility Power
+--------------------
+IT Equipment Power</pre>
+          <p>Lower is better.</p>
+        </div>
+        <div class="card">
+          <h4>WUE</h4>
+          <pre>WUE =
+Annual Water Usage
+------------------
+IT Equipment Energy</pre>
+          <p>Lower is better.</p>
+        </div>
+      </div>
+
+      <div class="story">
+        <strong>Restaurant analogy:</strong> If ₹1000 is spent but only ₹800 is actually
+        helping cook food, you want to reduce the waste. Data centres similarly try to use
+        power and water efficiently.
+      </div>
+    </section>
+
+    <section class="section" id="virtualization">
+      <span class="chapter">Chapter 4</span>
+      <h2>🖥️ Virtual Machines — One Big Server, Many Virtual Computers</h2>
+      <p class="lead">
+        Suppose you have one very powerful physical server. Instead of giving the whole machine to one customer,
+        you divide it into several virtual machines.
+      </p>
+
+      <pre>Physical Server
+32 CPU cores
+128 GB RAM
+
+        ↓ Virtualization
+
+VM 1 → Customer A
+VM 2 → Customer B
+VM 3 → Customer C
+VM 4 → Customer D</pre>
+
+      <div class="story">
+        <strong>Easy analogy:</strong> One building can contain many separate flats.
+        The building is the physical server; each flat is a virtual machine.
+      </div>
+    </section>
+
+    <section class="section" id="nist">
+      <span class="chapter">Chapter 5</span>
+      <h2>📚 NIST Definition of Cloud</h2>
+      <p class="lead">
+        The NIST idea can be remembered without memorising a very long sentence.
+      </p>
+
+      <div class="memory">
+        <strong>Exam-friendly meaning:</strong><br>
+        Cloud computing provides shared computing resources over a network,
+        on demand, and those resources can be quickly provided or released.
+      </div>
+
+      <p>Typical resources include:</p>
+      <div class="cards-3">
+        <div class="card"><h4>🌐 Networks</h4><p>Connectivity and bandwidth.</p></div>
+        <div class="card"><h4>🖥️ Servers</h4><p>Processing and compute power.</p></div>
+        <div class="card"><h4>💾 Storage</h4><p>Files, databases and data storage.</p></div>
+        <div class="card"><h4>📦 Applications</h4><p>Software delivered through cloud platforms.</p></div>
+        <div class="card"><h4>🧩 Services</h4><p>Managed capabilities offered by the provider.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="characteristics">
+      <span class="chapter">Most Important Exam Topic</span>
+      <h2>⭐ The Five Essential Characteristics of Cloud</h2>
+
+      <div class="cards-5">
+        <div class="card">
+          <div class="ico">⚙️</div>
+          <h4>On-Demand Self-Service</h4>
+          <p>Get resources yourself whenever needed.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🌍</div>
+          <h4>Broad Network Access</h4>
+          <p>Use cloud services through different devices over a network.</p>
+        </div>
+        <div class="card">
+          <div class="ico">🏊</div>
+          <h4>Resource Pooling</h4>
+          <p>Shared resource pool serves many users.</p>
+        </div>
+        <div class="card">
+          <div class="ico">📈</div>
+          <h4>Rapid Elasticity</h4>
+          <p>Resources can quickly scale up or down.</p>
+        </div>
+        <div class="card">
+          <div class="ico">📏</div>
+          <h4>Measured Service</h4>
+          <p>Usage is monitored and measured.</p>
+        </div>
+      </div>
+
+      <h3>1. On-Demand Self-Service</h3>
+      <div class="story">
+        <strong>ATM analogy:</strong> You do not call the bank manager every time you need cash.
+        You use the ATM yourself. Similarly, cloud users can create or request resources without
+        needing manual interaction each time.
+      </div>
+
+      <pre>Old IT:
+Email IT Team → Approval → Setup → Wait
+
+Cloud:
+Login → Click Create → Resource Ready</pre>
+
+      <h3>2. Broad Network Access</h3>
+      <pre>Same cloud service
+      ↓
+Laptop
+Phone
+Tablet
+Desktop</pre>
+      <p>You can access cloud capabilities using different devices through the network.</p>
+
+      <h3>3. Resource Pooling</h3>
+      <div class="story">
+        <strong>Hotel analogy:</strong> A hotel has many rooms and allocates them to guests as needed.
+        Cloud providers similarly share physical and virtual resources among many customers.
+      </div>
+
+      <pre>Large Resource Pool
+        |
+  -----------------
+  |       |       |
+User A  User B  User C</pre>
+
+      <div class="note">
+        <strong>Important term — Multi-tenancy:</strong>
+        One cloud infrastructure can serve multiple consumers, similar to one apartment building
+        housing many families.
+      </div>
+
+      <h3>Location Independence</h3>
+      <p>
+        You usually know that your data is in the cloud, but not exactly which physical machine
+        or storage device is handling it.
+      </p>
+
+      <h3>4. Rapid Elasticity</h3>
+      <div class="story">
+        <strong>Rubber-band analogy:</strong> A rubber band expands when you pull it and contracts when released.
+        Cloud resources can similarly increase and decrease according to demand.
+      </div>
+
+      <pre>Normal traffic:
+2 servers
+
+Festival sale:
+2 → 5 → 20 → 100 servers
+
+After sale:
+100 → 20 → 5 → 2 servers</pre>
+
+      <h3>5. Measured Service</h3>
+      <div class="story">
+        <strong>Electricity-meter analogy:</strong> Your electricity provider measures the units you consume.
+        Cloud systems also measure CPU time, storage, bandwidth and other usage.
+      </div>
+
+      <pre>CPU Hours
+Storage GB
+Bandwidth
+Active Users
+        ↓
+Measured and reported</pre>
+
+      <div class="memory">
+        <div class="mnemonic">O B R R M</div>
+        <strong>Mnemonic:</strong> “Online Business Requires Resources & Measurement.”
+      </div>
+    </section>
+
+    <section class="section" id="pizza">
+      <span class="chapter">One Story for All 5</span>
+      <h2>🍕 Remember the Five Characteristics with a Pizza App</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Cloud Characteristic</th>
+            <th>Pizza Story</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>On-Demand Self-Service</strong></td>
+            <td>You place the order yourself using the app.</td>
+          </tr>
+          <tr>
+            <td><strong>Broad Network Access</strong></td>
+            <td>You can order from mobile, tablet or laptop.</td>
+          </tr>
+          <tr>
+            <td><strong>Resource Pooling</strong></td>
+            <td>The restaurant shares ovens, cooks and ingredients across many customers.</td>
+          </tr>
+          <tr>
+            <td><strong>Rapid Elasticity</strong></td>
+            <td>During a cricket match, the restaurant temporarily uses more workers and resources.</td>
+          </tr>
+          <tr>
+            <td><strong>Measured Service</strong></td>
+            <td>You pay according to what you order.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="architecture">
+      <span class="chapter">Chapter 6</span>
+      <h2>🏗️ Cloud Architecture — Front End and Back End</h2>
+
+      <div class="diagram">
+        <div class="block">
+          <strong>FRONT END</strong><br><br>
+          Laptop<br>Mobile<br>Browser<br>User Interface<br>Applications
+        </div>
+        <div class="arrow">→</div>
+        <div class="block">
+          <strong>BACK END</strong><br><br>
+          Servers<br>Storage<br>Virtualization<br>Cloud Management Software
+        </div>
+      </div>
+
+      <div class="story">
+        <strong>Restaurant analogy:</strong> The customer seating area is the front end.
+        The kitchen where all the work happens is the back end.
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <span class="chapter">Chapter 7</span>
+      <h2>💳 Cloud Pricing — Pay for What You Use</h2>
+      <p class="lead">
+        Cloud pricing often follows a usage-based approach.
+      </p>
+
+      <pre>Server used for 1 hour
+        ↓
+Pay for 1 hour
+
+Server used for 100 hours
+        ↓
+Pay for 100 hours</pre>
+
+      <div class="story">
+        <strong>Simple idea:</strong> Cloud turns computing into something that feels more like electricity or water:
+        consume resources, measure the usage, and pay accordingly.
+      </div>
+    </section>
+
+    <section class="section" id="revision">
+      <span class="chapter">Quick Revision</span>
+      <h2>🎯 The Whole Lecture in One Story</h2>
+
+      <pre>You start a small online shop
+        ↓
+Traffic increases
+        ↓
+You need more servers, storage and bandwidth
+        ↓
+Buying everything is expensive
+        ↓
+You use cloud resources
+        ↓
+Scale up when demand increases
+        ↓
+Scale down when demand falls
+        ↓
+Pay according to usage</pre>
+
+      <div class="takeaway">
+        <h2>Exam-Ready Lines</h2>
+        <ol>
+          <li><strong>Cloud Computing:</strong> Shared computing resources are delivered over a network on demand.</li>
+          <li><strong>On-Demand Self-Service:</strong> Users can obtain computing resources automatically whenever required.</li>
+          <li><strong>Broad Network Access:</strong> Cloud resources are accessible over the network using different devices.</li>
+          <li><strong>Resource Pooling:</strong> Provider resources are shared among multiple consumers and dynamically allocated.</li>
+          <li><strong>Rapid Elasticity:</strong> Resources can quickly increase or decrease according to demand.</li>
+          <li><strong>Measured Service:</strong> Resource consumption is monitored and measured for control and billing.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Advanced Edge Computing • Lecture 2 • Cloud Computing • Story-Based Study Notes
+  </footer>
+<a href="../index.html" aria-label="Back to lecture library" style="position:fixed;bottom:18px;left:18px;z-index:1000;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font:600 14px/1.5 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 22px #0f172a33">← Lecture library</a>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Advanced Edge Computing - Lecture 3</title>
+<style>
+:root{--p:#2563eb;--s:#7c3aed;--c:#0891b2;--bg:#f7f9fc;--t:#182033;--m:#64748b;--b:#e5e7eb;--d:#0f172a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#f8fbff,#f7f9fc);color:var(--t);line-height:1.72}
+nav{position:sticky;top:0;z-index:9;background:#ffffffeb;backdrop-filter:blur(12px);border-bottom:1px solid var(--b);padding:13px 24px;display:flex;justify-content:space-between;align-items:center}
+nav b{font-size:1.05rem}nav div{display:flex;gap:8px;flex-wrap:wrap}nav a{color:#475569;text-decoration:none;padding:7px 10px;border-radius:9px;font-size:.9rem}nav a:hover{background:#eef4ff;color:var(--p)}
+.hero{max-width:1180px;margin:auto;padding:70px 24px 35px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+h1{font-size:clamp(2.6rem,6vw,5rem);line-height:1.03;letter-spacing:-.04em;margin:12px 0}.grad{background:linear-gradient(135deg,var(--p),var(--s),var(--c));-webkit-background-clip:text;color:transparent}
+.badge{display:inline-block;background:#dbeafe;color:#1d4ed8;padding:7px 11px;border-radius:999px;font-weight:800;font-size:.82rem}
+.hero p{color:#475569;font-size:1.1rem}.panel{background:linear-gradient(145deg,#111827,#1e3a8a,#312e81);color:white;padding:28px;border-radius:28px;box-shadow:0 20px 50px #1e3a8a33}.panel div{background:#ffffff12;border:1px solid #ffffff18;padding:13px;border-radius:13px;margin:10px 0}
+main{max-width:1180px;margin:auto;padding:8px 24px 70px}.sec{background:#fff;border:1px solid var(--b);border-radius:24px;padding:30px;margin:22px 0;box-shadow:0 16px 45px #0f172a12;scroll-margin-top:80px}
+.sec h2{font-size:2rem;margin:5px 0}.sec h3{margin-top:28px}.lead{color:#475569;font-size:1.08rem}.chip{display:inline-block;background:#eef2ff;color:#4338ca;border-radius:999px;padding:5px 10px;font-weight:800;font-size:.8rem}
+.story{background:#f0f9ff;border:1px solid #bae6fd;border-left:5px solid var(--c);border-radius:16px;padding:18px;margin:17px 0}.memory{background:linear-gradient(135deg,#eef2ff,#ecfeff);border:1px solid #c7d2fe;border-radius:18px;padding:20px;margin:18px 0}
+pre{white-space:pre-wrap;background:var(--d);color:#e2e8f0;border-radius:17px;padding:19px;overflow:auto}.grid3,.grid4{display:grid;gap:16px;margin-top:16px}.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}
+.card{border:1px solid var(--b);border-radius:17px;padding:18px}.card h4{margin:0 0 7px}.card p{margin:0;color:#526078}
+table{width:100%;border-collapse:collapse;margin-top:14px}th,td{padding:13px;border-bottom:1px solid var(--b);text-align:left;vertical-align:top}th{background:#f8fafc}
+.take{background:linear-gradient(135deg,#0f172a,#1d4ed8);color:#fff;border-radius:22px;padding:25px;margin-top:24px}
+footer{text-align:center;color:var(--m);padding:28px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}nav div{display:none}}
+@media(max-width:700px){.grid3,.grid4{grid-template-columns:1fr}.sec{padding:21px}}
+</style>
+</head>
+<body>
+<nav><b>☁ Advanced Edge Computing</b><div><a href="#services">Service Models</a><a href="#deploy">Deployment</a><a href="#traditional">Traditional IT</a><a href="#advantages">Advantages</a><a href="#disadvantages">Disadvantages</a><a href="#revision">Revision</a></div></nav>
+
+<section class="hero">
+<div><span class="badge">Lecture 3 • Story-Based Notes</span><h1>Cloud Models explained like a <span class="grad">simple story</span></h1><p>Imagine you are building an online food-delivery company called <b>FoodFast</b>. Your choices about software, platforms, infrastructure and access explain almost the entire lecture.</p></div>
+<div class="panel"><h3>The Big Picture</h3><div>1. How much do you want the provider to manage?<br><small>SaaS, PaaS, IaaS</small></div><div>2. Who can use the cloud?<br><small>Private, Public, Community, Hybrid</small></div><div>3. Why move from traditional IT?<br><small>Cost, scaling, flexibility and recovery</small></div></div>
+</section>
+
+<main>
+<section class="sec" id="services"><span class="chip">Chapter 1</span><h2>🧱 Cloud Service Models</h2><p class="lead">FoodFast needs software, servers, storage, databases, networking and operating systems. The question is: <b>what do you want to manage yourself?</b></p>
+<div class="grid3"><div class="card"><h4>🧑‍💻 SaaS</h4><p>Use ready-made software. Provider manages almost everything.</p></div><div class="card"><h4>🛠️ PaaS</h4><p>Use a managed platform to build and deploy your own application.</p></div><div class="card"><h4>🖥️ IaaS</h4><p>Rent servers, storage and networking and manage more yourself.</p></div></div>
+<h3>SaaS — Just Use the Software</h3><div class="story"><b>Restaurant analogy:</b> You order food and simply eat. You do not manage the kitchen, gas, chef or utensils.</div><pre>You manage: Very little
+
+Provider manages:
+Application
+Updates
+Backup
+Support
+Maintenance
+Underlying environment</pre><p><b>Examples from the lecture:</b> Gmail, Dropbox, Prime and Netflix.</p>
+<h3>PaaS — Build on a Managed Platform</h3><div class="story"><b>Kitchen analogy:</b> Someone gives you a ready kitchen and tools. You bring your recipe and build your own dish.</div>
+<h3>IaaS — Rent the Infrastructure</h3><div class="story"><b>Empty-flat analogy:</b> You get the building and basic connections, but you decide how to set up the inside.</div>
+<table><tr><th>Model</th><th>Easy Meaning</th><th>Control</th></tr><tr><td>SaaS</td><td>Use complete software</td><td>Least</td></tr><tr><td>PaaS</td><td>Build on a managed platform</td><td>Medium</td></tr><tr><td>IaaS</td><td>Rent infrastructure</td><td>More</td></tr></table>
+<div class="memory"><b>Memory trick:</b> I build from <b>IaaS</b>, develop on <b>PaaS</b>, and simply use <b>SaaS</b>.</div></section>
+
+<section class="sec" id="deploy"><span class="chip">Chapter 2</span><h2>🌍 Cloud Deployment Models</h2><p class="lead">Now FoodFast asks: <b>who should be allowed to use my cloud?</b></p>
+<div class="grid4"><div class="card"><h4>🔒 Private</h4><p>Used by one organization.</p></div><div class="card"><h4>🌐 Public</h4><p>Shared cloud for multiple customers.</p></div><div class="card"><h4>👥 Community</h4><p>Shared by organizations with common needs.</p></div><div class="card"><h4>🔀 Hybrid</h4><p>Combination of private and public cloud.</p></div></div>
+<h3>Private Cloud</h3><div class="story"><b>Home analogy:</b> Your house is for your family only. Likewise, a private cloud is meant for one organization.</div>
+<h3>Public Cloud</h3><div class="story"><b>Hotel analogy:</b> Many customers can book rooms in the same hotel. The provider runs the shared infrastructure.</div>
+<h3>Community Cloud</h3><div class="story"><b>Hospital example:</b> Several hospitals may share infrastructure designed around common privacy, security and compliance needs.</div>
+<h3>Hybrid Cloud</h3><div class="story"><b>Locker + rented hall analogy:</b> Keep sensitive items in your private locker, but use a public hall when you need extra capacity.</div>
+<div class="memory"><b>Deployment trick:</b><br>Private = Mine<br>Public = Everyone<br>Community = Similar Group<br>Hybrid = Mix</div></section>
+
+<section class="sec" id="traditional"><span class="chip">Chapter 3</span><h2>🏢 Traditional IT Architecture</h2><p class="lead">Imagine FoodFast buys and manages everything itself.</p><pre>Servers
+Networking
+Storage
+Cooling
+Electricity backup
+Building space
+IT staff</pre>
+<div class="grid3"><div class="card"><h4>💸 High Cost</h4><p>Rent, power, cooling and maintenance.</p></div><div class="card"><h4>⏳ Slow Expansion</h4><p>Adding or replacing hardware takes time.</p></div><div class="card"><h4>📉 Limited Scaling</h4><p>Capacity depends on what you physically own.</p></div><div class="card"><h4>👨‍🔧 Monitoring Team</h4><p>You need staff to manage infrastructure.</p></div><div class="card"><h4>🔥 Disaster Risk</h4><p>Fire, power shutdown or other disasters may affect systems.</p></div></div>
+<div class="memory"><b>How cloud helps:</b> lower IT costs, better agility and easier scaling.</div></section>
+
+<section class="sec" id="advantages"><span class="chip">Chapter 4</span><h2>✅ Major Advantages of Cloud Computing</h2>
+<h3>1. Highly Scalable & Flexible</h3><pre>Normal traffic:
+2 servers
+
+Festival sale:
+2 → 10 → 50 → 100
+
+After sale:
+100 → 20 → 5 → 2</pre>
+<h3>2. Reduced Infrastructure Cost</h3><div class="story">Use provider infrastructure instead of buying and operating everything yourself.</div>
+<h3>3. Higher Security</h3><div class="grid3"><div class="card"><h4>24×7 Visibility</h4><p>Continuous monitoring.</p></div><div class="card"><h4>DDoS Protection</h4><p>Protection mechanisms against distributed attacks.</p></div><div class="card"><h4>Threat Detection</h4><p>Advanced monitoring can identify suspicious activity.</p></div></div>
+<h3>4. High Availability</h3><div class="story"><b>Traffic-police analogy:</b> A load balancer distributes requests among multiple servers. If one fails, others can continue.</div>
+<h3>5. Disaster Recovery</h3><div class="story">Cloud backups can help restore data and services after emergencies or power outages.</div>
+<h3>6. Fault Tolerance</h3><table><tr><th>Technique</th><th>Easy Meaning</th></tr><tr><td>Reconfiguration</td><td>Remove faulty component and continue.</td></tr><tr><td>Checkpointing</td><td>Continue a task from where it stopped.</td></tr><tr><td>Job Migration</td><td>Move the failed task to another system.</td></tr></table>
+<h3>7. No Location Constraints</h3><pre>Home
+Office
+Hotel
+Airport
+Another city
+      ↓
+Access cloud resources through the network</pre></section>
+
+<section class="sec" id="disadvantages"><span class="chip">Chapter 5</span><h2>⚠️ Disadvantages of Cloud Computing</h2>
+<div class="grid3"><div class="card"><h4>🌐 Network Dependency</h4><p>If connectivity fails, cloud access may be affected.</p></div><div class="card"><h4>⛔ Downtime</h4><p>Provider outages can make services temporarily unavailable.</p></div><div class="card"><h4>🎛️ Limited Control</h4><p>You may not control every part of the infrastructure.</p></div><div class="card"><h4>🔐 Vulnerability to Attacks</h4><p>Cloud services still face cybersecurity risks.</p></div><div class="card"><h4>🔒 Vendor Lock-In</h4><p>Moving from one provider to another can become difficult.</p></div><div class="card"><h4>📊 Varied Performance / Support</h4><p>Performance and support may differ.</p></div></div>
+<div class="story"><b>Vendor lock-in analogy:</b> Imagine a charger that works with only one brand. Once your system depends heavily on one provider, moving away may be difficult.</div></section>
+
+<section class="sec" id="revision"><span class="chip">Quick Revision</span><h2>🎯 The Entire Lecture in One FoodFast Story</h2>
+<pre>FoodFast wants cloud services
+        ↓
+How much do I want to manage?
+        ↓
+SaaS / PaaS / IaaS
+        ↓
+Who should access it?
+        ↓
+Private / Public / Community / Hybrid
+        ↓
+Why move from traditional IT?
+        ↓
+Lower cost + easier scaling + flexibility
+        ↓
+Benefits:
+Availability + Recovery + Security + Remote Access
+        ↓
+Risks:
+Network dependency + Downtime + Limited control + Lock-in</pre>
+<div class="take"><h2>Best Memory Tricks</h2><ul><li><b>Service models:</b> I build from IaaS, develop on PaaS, and simply use SaaS.</li><li><b>Deployment models:</b> Private = Mine, Public = Everyone, Community = Similar Group, Hybrid = Mix.</li><li><b>Why Cloud:</b> Less hardware, easier scaling, more flexibility, recovery and remote access.</li></ul></div></section>
+</main>
+<footer>Advanced Edge Computing • Lecture 3 • Story-Based Study Notes</footer>
+<a href="../index.html" aria-label="Back to lecture library" style="position:fixed;bottom:18px;left:18px;z-index:1000;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font:600 14px/1.5 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 22px #0f172a33">← Lecture library</a>
+</body></html>

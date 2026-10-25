@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Edge Computing - Lecture 1</title>
+  <style>
+    :root{
+      --bg:#f7f9fc;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --secondary:#7c3aed;
+      --accent:#0ea5e9;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --border:#e2e8f0;
+      --code:#0f172a;
+      --shadow:0 14px 40px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#f8fbff 0%,#f7f9fc 40%,#eef4ff 100%);
+      color:var(--text);
+      line-height:1.7;
+    }
+    a{text-decoration:none;color:inherit}
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      backdrop-filter:blur(14px);
+      background:rgba(255,255,255,.85);
+      border-bottom:1px solid rgba(226,232,240,.8);
+    }
+    .nav{
+      max-width:1180px;margin:auto;padding:14px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+    }
+    .brand{
+      font-weight:800;font-size:1.05rem;
+      display:flex;align-items:center;gap:10px;
+    }
+    .brand-badge{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;color:white;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      box-shadow:0 8px 20px rgba(37,99,235,.25);
+    }
+    .navlinks{
+      display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+    }
+    .navlinks a{
+      padding:8px 12px;border-radius:10px;color:#475569;font-size:.92rem;
+    }
+    .navlinks a:hover{background:#eef4ff;color:var(--primary)}
+    .hero{
+      max-width:1180px;margin:0 auto;padding:70px 24px 38px;
+      display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center;
+    }
+    .eyebrow{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:7px 12px;border-radius:999px;
+      color:#1d4ed8;background:#dbeafe;font-weight:700;font-size:.85rem;
+    }
+    h1{
+      font-size:clamp(2.5rem,6vw,5rem);
+      line-height:1.02;margin:18px 0 18px;letter-spacing:-.04em;
+    }
+    .gradient{
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero p{font-size:1.12rem;color:#475569;max-width:760px}
+    .hero-card{
+      background:linear-gradient(145deg,#0f172a,#1e293b);
+      color:white;border-radius:28px;padding:28px;box-shadow:var(--shadow);
+      position:relative;overflow:hidden;
+    }
+    .hero-card:before{
+      content:"";position:absolute;inset:auto -60px -60px auto;
+      width:180px;height:180px;border-radius:50%;
+      background:radial-gradient(circle,rgba(59,130,246,.5),transparent 70%);
+    }
+    .hero-flow{display:grid;gap:12px;margin-top:18px}
+    .flow-step{
+      padding:14px 16px;border-radius:14px;
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);
+      font-weight:700;
+    }
+    .flow-step small{display:block;color:#cbd5e1;font-weight:500;margin-top:4px}
+    .container{max-width:1180px;margin:auto;padding:16px 24px 72px}
+    .section{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:24px;padding:30px;margin:22px 0;box-shadow:var(--shadow);
+      scroll-margin-top:90px;
+    }
+    .section h2{font-size:2rem;margin:0 0 10px}
+    .section h3{margin-top:28px}
+    .lead{font-size:1.08rem;color:#475569}
+    .story{
+      border-left:5px solid var(--accent);
+      background:#f0f9ff;border-radius:14px;padding:18px 20px;margin:18px 0;
+    }
+    .story strong{color:#0369a1}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .mini-card{
+      border:1px solid var(--border);border-radius:18px;padding:20px;background:#fff;
+    }
+    .mini-card h4{margin:0 0 8px}
+    .icon{
+      width:48px;height:48px;display:grid;place-items:center;
+      border-radius:14px;background:#eff6ff;font-size:1.5rem;margin-bottom:12px;
+    }
+    pre{
+      white-space:pre-wrap;word-break:break-word;
+      background:var(--code);color:#e2e8f0;
+      border-radius:18px;padding:20px;overflow:auto;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .pill{
+      display:inline-block;padding:5px 10px;border-radius:999px;
+      background:#eef2ff;color:#4338ca;font-weight:700;font-size:.82rem;
+    }
+    .compare{
+      width:100%;border-collapse:collapse;margin-top:16px;overflow:hidden;border-radius:14px;
+    }
+    .compare th,.compare td{padding:14px;border-bottom:1px solid var(--border);text-align:left}
+    .compare th{background:#f8fafc}
+    .memory{
+      background:linear-gradient(135deg,#eef2ff,#ecfeff);
+      border:1px solid #c7d2fe;border-radius:20px;padding:24px;
+    }
+    .takeaway{
+      background:linear-gradient(135deg,#111827,#1e3a8a);
+      color:white;border-radius:24px;padding:30px;
+    }
+    .takeaway h2{margin-top:0}
+    .takeaway li{margin:8px 0}
+    footer{
+      text-align:center;color:#64748b;padding:30px 20px 50px;
+    }
+    .toc-mobile{display:none}
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .navlinks{display:none}
+      .grid-2,.grid-3{grid-template-columns:1fr}
+      .toc-mobile{display:block}
+      h1{font-size:3rem}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <div class="brand"><div class="brand-badge">EC</div> Advanced Edge Computing</div>
+      <div class="navlinks">
+        <a href="#centralized">Centralized</a>
+        <a href="#distributed">Distributed</a>
+        <a href="#grid">Grid</a>
+        <a href="#cluster">Cluster</a>
+        <a href="#utility">Utility</a>
+        <a href="#revision">Revision</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="eyebrow">📘 Lecture 1 • Story-Based Notes</span>
+      <h1>Computing concepts explained like a <span class="gradient">simple story</span></h1>
+      <p>
+        Imagine a restaurant that slowly grows from one cook to a whole network of teams.
+        That single story can help you understand centralized computing, distributed computing,
+        grid computing, cluster computing and utility computing.
+      </p>
+    </div>
+    <div class="hero-card">
+      <h3 style="margin-top:0">The Journey</h3>
+      <div class="hero-flow">
+        <div class="flow-step">1. Centralized Computing <small>One main computer handles the work.</small></div>
+        <div class="flow-step">2. Distributed Computing <small>Many independent computers cooperate.</small></div>
+        <div class="flow-step">3. Grid Computing <small>Resources from different places join together.</small></div>
+        <div class="flow-step">4. Cluster Computing <small>Closely connected machines behave as one.</small></div>
+        <div class="flow-step">5. Utility Computing <small>Use computing on demand and pay for usage.</small></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <section class="section" id="centralized">
+      <span class="pill">Chapter 1</span>
+      <h2>🍳 Centralized Computing — One Cook Does Everything</h2>
+      <p class="lead">
+        Imagine you open a small restaurant called <strong>Computer Dhaba</strong>. In the beginning,
+        there is only one cook. Every customer gives every order to that one cook.
+      </p>
+
+      <div class="story">
+        <strong>Story:</strong> Tea, dosa, burger, noodles — everything is prepared by the same cook.
+        This is similar to centralized computing, where clients send requests to a central server.
+      </div>
+
+      <pre>Customer 1 ───┐
+Customer 2 ───┤
+Customer 3 ───┼──> ONE CENTRAL SERVER
+Customer 4 ───┤
+Customer 5 ───┘</pre>
+
+      <p><strong>Easy memory line:</strong> Everyone goes to one counter.</p>
+
+      <h3>What is the problem?</h3>
+      <p>
+        If 1,000 customers suddenly arrive, one cook becomes overloaded. And if that cook becomes unavailable,
+        the whole restaurant is affected. This motivates us to use more than one computer.
+      </p>
+    </section>
+
+    <section class="section" id="distributed">
+      <span class="pill">Chapter 2</span>
+      <h2>🌐 Distributed Computing — Many Cooks Share the Work</h2>
+      <p class="lead">
+        Instead of one cook, now you hire several cooks. Each cook has his own tools and works independently,
+        but they communicate and coordinate.
+      </p>
+
+      <pre>                Big Order
+                   |
+        -------------------------
+        |          |            |
+      Cook 1     Cook 2       Cook 3
+      Pizza      Burger       Drinks</pre>
+
+      <div class="story">
+        <strong>Core idea:</strong> Multiple autonomous computers, each with its own local memory,
+        communicate with one another by passing messages.
+      </div>
+
+      <h3>ATM Example</h3>
+      <pre>ATM
+ |
+ | "Customer wants ₹5000"
+ ↓
+Bank Network
+ |
+ ↓
+Bank Server
+ |
+ | "Balance sufficient"
+ ↓
+ATM
+ |
+ ↓
+Cash Dispensed</pre>
+
+      <div class="grid-3">
+        <div class="mini-card">
+          <div class="icon">🛡️</div>
+          <h4>Fault Tolerance</h4>
+          <p>If one node fails, other nodes may continue working, although performance can reduce.</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon">🤝</div>
+          <h4>Resource Sharing</h4>
+          <p>Computers can share CPU power, storage and other resources with one another.</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon">⚖️</div>
+          <h4>Load Sharing</h4>
+          <p>Tasks are distributed among several nodes instead of overloading one machine.</p>
+        </div>
+      </div>
+
+      <h3>Easy to Expand</h3>
+      <p>
+        If your restaurant becomes more popular, you simply add another cook. Similarly,
+        distributed systems can grow by adding more nodes.
+      </p>
+
+      <h3>Why Distributed Computing?</h3>
+      <div class="grid-2">
+        <div class="mini-card">
+          <h4>🧮 Computing-Intensive Work</h4>
+          <p>Large computations, such as Monte Carlo calculations, can be divided among many computers.</p>
+        </div>
+        <div class="mini-card">
+          <h4>📦 Data-Intensive Work</h4>
+          <p>Huge volumes of data can be processed across multiple machines instead of relying on one system.</p>
+        </div>
+      </div>
+
+      <h3>Robustness and SPOF</h3>
+      <pre>Node 1 ✅
+Node 2 ❌
+Node 3 ✅
+Node 4 ✅
+
+System can still continue.</pre>
+      <p><strong>SPOF</strong> means <strong>Single Point of Failure</strong>. Distributed systems try to avoid it.</p>
+    </section>
+
+    <section class="section" id="grid">
+      <span class="pill">Chapter 3</span>
+      <h2>🧩 Grid Computing — Computers from Different Places Join Hands</h2>
+      <p class="lead">
+        Imagine four colleges, each with many computers. Instead of using them separately, they connect their resources
+        to solve one very large problem.
+      </p>
+
+      <pre>College A → 100 computers
+College B → 200 computers
+College C → 150 computers
+College D → 300 computers
+
+Together → One very powerful virtual computing environment</pre>
+
+      <div class="story">
+        <strong>Analogy:</strong> One person cannot lift a huge object, but 100 people working together can.
+      </div>
+
+      <h3>Three Important Roles</h3>
+      <div class="grid-3">
+        <div class="mini-card">
+          <div class="icon">🎛️</div>
+          <h4>Control Node</h4>
+          <p>The manager. It keeps track of resources and helps coordinate the network.</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon">🎁</div>
+          <h4>Provider</h4>
+          <p>The computer that contributes resources like processor power or storage.</p>
+        </div>
+        <div class="mini-card">
+          <div class="icon">👤</div>
+          <h4>User</h4>
+          <p>The computer or person who uses resources from the grid.</p>
+        </div>
+      </div>
+
+      <div class="memory">
+        <strong>Memory trick:</strong><br>
+        Control Node = Manager<br>
+        Provider = Gives resources<br>
+        User = Uses resources
+      </div>
+    </section>
+
+    <section class="section" id="cluster">
+      <span class="pill">Chapter 4</span>
+      <h2>🖥️ Cluster Computing — One Team, Many Computers</h2>
+      <p class="lead">
+        Now imagine a company has several powerful computers in the same building, connected by a fast LAN.
+        They work together and behave like one machine.
+      </p>
+
+      <pre>              Master Computer
+                    |
+          --------------------
+          |        |        |
+        PC 1     PC 2     PC 3</pre>
+
+      <div class="story">
+        <strong>Cricket analogy:</strong> A team has many players, but we refer to them as one team.
+        In the same way, many machines can act as one cluster.
+      </div>
+
+      <h3>Cluster vs Grid</h3>
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>Simple Meaning</th>
+            <th>Story Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cluster</strong></td>
+            <td>Closely connected computers usually on a fast local network</td>
+            <td>All cooks working inside the same restaurant</td>
+          </tr>
+          <tr>
+            <td><strong>Grid</strong></td>
+            <td>Resources can come from different systems and locations</td>
+            <td>Teams from Delhi, Chandigarh and Jaipur joining together</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Main Cluster Components</h3>
+      <ul>
+        <li>Cluster Nodes</li>
+        <li>Cluster Operating System</li>
+        <li>Switch or Node Interconnect</li>
+        <li>Network Switching Hardware</li>
+      </ul>
+    </section>
+
+    <section class="section" id="utility">
+      <span class="pill">Chapter 5</span>
+      <h2>⚡ Utility Computing — Use Computing Like Electricity</h2>
+      <p class="lead">
+        At home, you do not buy a power station. You use electricity and pay according to how much you consume.
+        Utility computing uses the same idea.
+      </p>
+
+      <pre>Used 300 units of electricity
+            ↓
+Pay for 300 units
+
+Used computing resources
+            ↓
+Pay for what you used</pre>
+
+      <div class="story">
+        <strong>Example:</strong> Your website normally needs 2 servers, but during a Diwali sale it may need 20.
+        Instead of buying 20 servers permanently, you use more resources only when needed.
+      </div>
+
+      <p><strong>Easy memory line:</strong> Use on demand, pay per use.</p>
+    </section>
+
+    <section class="section" id="revision">
+      <span class="pill">Quick Revision</span>
+      <h2>🎯 Whole Lecture in One Wedding Story</h2>
+
+      <div class="grid-2">
+        <div class="mini-card">
+          <h4>Centralized</h4>
+          <p>One person handles food, chairs, decoration and DJ.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Distributed</h4>
+          <p>Different people handle different jobs and coordinate.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Cluster</h4>
+          <p>One catering team with many members working closely together.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Grid</h4>
+          <p>Teams from different cities combine resources for a huge event.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Utility</h4>
+          <p>Rent 1,000 chairs and pay only for the duration you use them.</p>
+        </div>
+      </div>
+
+      <div class="takeaway" style="margin-top:24px">
+        <h2>5 Lines to Remember for the Exam</h2>
+        <ol>
+          <li><strong>Centralized Computing:</strong> One central machine handles requests.</li>
+          <li><strong>Distributed Computing:</strong> Multiple independent computers communicate and share work.</li>
+          <li><strong>Grid Computing:</strong> Resources from multiple computers combine to solve large tasks.</li>
+          <li><strong>Cluster Computing:</strong> Closely connected computers work together like one system.</li>
+          <li><strong>Utility Computing:</strong> Computing resources are provided on demand and charged by usage.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Advanced Edge Computing • Lecture 1 • Story-based study notes
+  </footer>
+<a href="../index.html" aria-label="Back to lecture library" style="position:fixed;bottom:18px;left:18px;z-index:1000;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font:600 14px/1.5 system-ui,sans-serif;text-decoration:none;box-shadow:0 6px 22px #0f172a33">← Lecture library</a>
+</body>
+</html>
